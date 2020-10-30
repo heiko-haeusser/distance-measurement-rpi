@@ -66,6 +66,11 @@ _Echo		GPIO24_<br />
 git clone https://github.com/heiko-haeusser/distance-measurement-rpi.git
 ```
 
+2. make install script excecutable
+```sh
+sudo chmod +x install.sh
+```
+
 2. run install script (install.sh)<br />
 parameters: [-shell] [-cpp]<br />
   -shell: installs the solution from task 2 <br />

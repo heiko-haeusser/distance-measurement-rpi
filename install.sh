@@ -15,7 +15,7 @@ echo "start install routine"
 
 if [[ "$(whoami)" != root ]]; then
   echo "Only user root can run this script."
-  #exit -1
+  exit -1
 fi
 
 function copyFiles {
