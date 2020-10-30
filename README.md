@@ -103,6 +103,8 @@ Task description: Write a simple shell script that sets up GPIO23 (the LED) as o
 
 ### Task 3. C++ Application to access sensor data, control status LED and perform measurement
 3a. Write a simple C++ application that compiles and runs on the target hardware.
+=> done with draft commit
+
 3b. An implementation with object-oriented architecture that is able to read values from GPIO,
 forward them to a processing component for the runtime calculations and blink the LED according
 to a classification based on the distance of an object (1 s interval OK, 300 ms interval
