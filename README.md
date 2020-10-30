@@ -7,7 +7,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/heiko-haeusser/linux_course">
+  <a href="https://github.com/heiko-haeusser/distance-measurement-rpi">
     <img src="images/logo.jpg" alt="Logo" width="80" height="80">
   </a>
 
@@ -16,7 +16,7 @@
   <p align="center">
     Hardware Related CPP course - week 4 final Projekt
     <br />
-    <a href="https://github.com/heiko-haeusser/linux_course"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/heiko-haeusser/distance-measurement-rpi"><strong>Explore the docs »</strong></a>
     <br />
     <br />
   </p>
@@ -63,7 +63,7 @@ _Echo		GPIO24_<br />
 
 1. Clone the repo
 ```sh
-git clone https://github.com/heiko-haeusser/linux_course.git
+git clone https://github.com/heiko-haeusser/distance-measurement-rpi.git
 ```
 
 2. run install script (install.sh)<br />
@@ -122,7 +122,7 @@ shall be printed to the kernel log.
 <!-- LICENSE -->
 ## License
 
-Distributed under the GPLv3 License. See [LICENSE](https://github.com/heiko-haeusser/linux_course/blob/main/LICENSE) for more information.
+Distributed under the GPLv3 License. See [LICENSE](https://github.com/heiko-haeusser/distance-measurement-rpi/blob/main/LICENSE) for more information.
 
 
 <!-- CONTACT -->
@@ -130,7 +130,7 @@ Distributed under the GPLv3 License. See [LICENSE](https://github.com/heiko-haeu
 
 Heiko Haeusser - heiko.haeusser@web.de
 
-Project Link: [https://github.com/heiko-haeusser/linux_course](https://github.com/heiko-haeusser/linux_course)
+Project Link: [https://github.com/heiko-haeusser/distance-measurement-rpi](https://github.com/heiko-haeusser/distance-measurement-rpi)
 
 
 
@@ -145,6 +145,6 @@ Project Link: [https://github.com/heiko-haeusser/linux_course](https://github.co
 [issues-shield]: https://img.shields.io/github/issues/heiko-haeusser/repo.svg?style=flat-square
 [issues-url]: https://github.com/heiko-haeusser/repo/issues
 [license-shield]: https://img.shields.io/github/license/heiko-haeusser/repo.svg?style=flat-square
-[license-url]: https://github.com/heiko-haeusser/linux_course/blob/main/LICENSE
+[license-url]: https://github.com/heiko-haeusser/distance-measurement-rpi/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/heiko-haeusser
