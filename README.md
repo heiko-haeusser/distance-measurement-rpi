@@ -111,6 +111,92 @@ to a classification based on the distance of an object (1 s interval OK, 300 ms 
 Warning, 20 ms interval Stop). There shall be one measurement every 500 ms. The result of a
 successful distance measurement shall be printed on standard output.
 
+#### Description of the SW Architecture:
+The Application is divided in parts:<br />
+##### 1. Sysfs Interface to control the GPIOs<br />
+This part is defined as an abstract class Custom_Gpio with the two derived classes Custom_Gpo and Custom_Gpi.<br />
+The base class holds all necessary functionality which is necessary to configure a GPIO (e.g. sysfs gpio export/unexport interface, sysfs gpio direction config).<br />
+On top of that the derived class Custom_Gpo holds all necessary functionality which is only relevant for an _output_ (e.g. to set sysfs gpio value).<br />
+The derived class Custom_Gpi holds all necessary functionality which is only relevant for an _input_ (e.g. to set sysfs gpio value).<br />
+There are two threads planned, one for doing the measurement and another one for flashing the LED.<br />
+###### Description of components:
+Custom_Gpio:
+```sh
+	virtual int setupGpio(void) = 0; //abstract function to do the whole initialization 
+	int exportGpio(void); //sysfs export interface
+	int setGpioDir(void); //sysfs direction interface (in/out)
+	int unexportGpio(void); //sysfs unexport interface
+```
+Custom_Gpo:
+```sh
+	Custom_Gpo(); //constructor
+	Custom_Gpo(int _gpio_number, std::string _gpio_direction, int _gpio_value); //user defined constructor
+
+	virtual ~Custom_Gpo(); //distructor
+	Custom_Gpo(const Custom_Gpo &other); //copy constructor
+	int setupGpio(void);
+	int setGpioValue(int value);
+```
+Custom_Gpi:
+```sh
+	Custom_Gpi(); //constructor
+	Custom_Gpi(int _gpio_number, std::string _gpio_direction); //user defined constructor
+
+	virtual ~Custom_Gpi(); //distructor
+	Custom_Gpi(const Custom_Gpi &other); //copy constructor
+	int setupGpio(void); //function to do the whole initialization for an input pin
+	int getGpioValue(); //returns the input state as an integer value
+```
+
+##### 2. GPIO Manager
+The GPIO_Manager class implements a first abstraction to the user. GPIOs are only initialized and controlled, even the functionality is mapped to the function (e.g. gpio_led which holds the correct pin for the LED output).<br />
+```sh
+	Gpio_Manager(); //constructor
+	virtual ~Gpio_Manager(); //distructor
+	Gpio_Manager(const Gpio_Manager &other); //copy constructor
+	Gpio_Manager& operator=(const Gpio_Manager &other); //copy assignment
+	
+	void initGpios(void); //function to do the whole initialization for all used pins
+	void deinitGpios(void); //function to do the whole uninitialization for all used pins
+
+	void setLED(bool val); //switches the LED on and off
+	void setTrigger(bool val);//switches the trigger pin on and off
+	void setBtnPullup(bool val); //switches the pullup/VCC for the button on and off
+	bool readBtnState(void); //returns if the button is pressed 
+	bool readEchoState(void); //returns if the echo pin is high 
+```
+##### 3. Ultrasonic Sensor Component
+The Ultrasonic Sensor Component implements an abstracted interface to the ultrasonic sensor.
+
+```sh
+	has a pointer to the Gpio_Manager 
+
+	Ultrasonic_Sensor(Gpio_Manager &gpioMgr); //constructor
+	virtual ~Ultrasonic_Sensor(); //distructor
+	void initiateTrigger(void); //function to initiate the ultrasonic signal to be sent out
+	int captureEcho(void); //function to capture the echo and calculate the duration of the pulse
+	double calculateDistance(void); //function to calculate the distance to an obstacle based on the last measured duration
+	void performMeasurement(void); //does all in one (whole distance measurement including trigger)
+	
+	int getDistanceCm();
+	void setDistanceCm(int distanceCm);
+	double getDistanceM();
+	void setDistanceM(double distanceM);
+	int getDuration();
+	void setDuration(int duration);
+	const Gpio_Manager& getGpioMgr();
+	void setGpioMgr(const Gpio_Manager &gpioMgr);
+```
+##### 3. Parking Distance Component
+The Parking Distance Component implements controls the LED according to the measured distance from the Ultrasonic Sensor Component.
+
+```sh
+	has a pointer to the Gpio_Manager and to the Ultrasonic_Sensor
+	
+	oid toggleLED(void); //toggle the LED with the updated frequency from the measurement thread
+```
+.<br />
+
 ### Task 4: Systemd service unit
 Write a service unit that starts the PDC C++ application at boot time (target multi-user).
 
