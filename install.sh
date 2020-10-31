@@ -42,6 +42,11 @@ if [[ $1 == -cpp ]]; then
 	copyFiles distance-measurement-rpi /usr/local/task-3/
 
 	cd ../../
+	
+	copyFiles services/distance-measurement-rpi.service /etc/systemd/system/distance-measurement-rpi.service
+	sudo systemctl enable distance-measurement-rpi.service
+ 
+	
 else 
   if [[ $1 == -bash ]]; then 
   	echo "installing bash app (Task2)"

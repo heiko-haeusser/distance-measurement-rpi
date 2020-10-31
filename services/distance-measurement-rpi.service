@@ -1,0 +1,6 @@
+[Unit]
+Description=service which starts C++ distance measurement app
+[Service]
+ExecStart=/usr/local/task-3/distance-measurement-rpi
+[Install]
+WantedBy=multi-user.target

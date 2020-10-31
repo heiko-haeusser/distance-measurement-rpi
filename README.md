@@ -43,12 +43,15 @@
 The aim of the project is the development of a distance measurement for a RPI custom board with LED, Button and Ultrasonic Sensor.
 The given code supports custom board version V1.1<br /><br />
 
+##!!!Important Notice: All the tasks for distance measurement are designed to run until the button is pressed!!!
+
 The Board has the following IO configuration:<br />
 _Button 	GPIO26_<br />
 _LED 		GPIO2_<br />
 _Ultrasonic Sensor_<br />
 _Trigger	GPIO18_<br />
 _Echo		GPIO24_<br />
+
 
 ### The project can be separated in the following main tasks:
 1. Development of a Custom Kernel module that interfaces a distance sensor (last task)<br />
