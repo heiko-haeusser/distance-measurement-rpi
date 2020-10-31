@@ -1,0 +1,7 @@
+[Unit]
+Description=Service for CPU and RAM load logging
+[Service]
+ExecStart=/usr/local/cpu-and-ram-tempfs-log.sh
+[Install]
+WantedBy=multi-user.target
+

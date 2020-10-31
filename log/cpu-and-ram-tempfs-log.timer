@@ -1,0 +1,8 @@
+[Unit]
+Description=Timer for CPU and RAM load logging
+[Timer]
+OnBootSec=1
+OnUnitActiveSec=5s
+Unit=cpu-and-ram-tempfs-log.service
+[Install]
+WantedBy=timers.target

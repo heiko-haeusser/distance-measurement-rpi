@@ -54,17 +54,14 @@ else
 	# copy shell scripts for HW initialization to /opt/
 	sudo chmod +x shell/_bin/hw_init.sh
 	copyFiles shell/_bin/hw_init.sh /opt/hw_init.sh
-	sudo chmod +x /opt/hw_init.sh
 
 	sudo chmod +x shell/_bin/hw_deInit.sh
 	copyFiles shell/_bin/hw_deInit.sh /opt/hw_deInit.sh
-	sudo chmod +x /opt/hw_deInit.sh
 
 	# copy shell script for task 2 to /usr/local
 	
 	sudo chmod +x shell/_bin/task2.sh
 	copyFiles shell/_bin/task2.sh /usr/local/task2.sh
-	sudo chmod +x /usr/local/task2.sh
 
 	echo "Script for hw init is now available at: /opt/hw_init.sh"
 	echo "Script for hw deinit is now available at: /opt/hw_deInit.sh"
@@ -76,5 +73,15 @@ else
   fi
 
 fi
+
+# Task 5 mount tempfs at /media/sensor_logs/ and story every 5s CPU and RAM load
+sudo chmod +x log/cpu-and-ram-tempfs-log.sh
+copyFiles log/cpu-and-ram-tempfs-log.sh /usr/local/cpu-and-ram-tempfs-log.sh
+
+copyFiles log/cpu-and-ram-tempfs-log.timer /etc/systemd/system/cpu-and-ram-tempfs-log.timer
+sudo systemctl enable cpu-and-ram-tempfs-log.timer
+
+copyFiles log/cpu-and-ram-tempfs-log.service /etc/systemd/system/cpu-and-ram-tempfs-log.service
+
 
 echo "install routine finished"
