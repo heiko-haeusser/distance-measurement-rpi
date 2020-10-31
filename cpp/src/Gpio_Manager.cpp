@@ -18,11 +18,11 @@ namespace Parking_System {
 
 
 Gpio_Manager::Gpio_Manager() : 
-	button(Gpio_Setup::Custom_Gpi(gpio_btn, Gpio_Setup::gpio_dir_input)), \
-	puBtn(Gpio_Setup::Custom_Gpo(gpio_puBtn, Gpio_Setup::gpio_dir_output, Gpio_Setup::gpio_val_low)), \
-	led(Gpio_Setup::Custom_Gpo(gpio_LED, Gpio_Setup::gpio_dir_output, Gpio_Setup::gpio_val_low)),  \
-	us_trig(Gpio_Setup::Custom_Gpo(gpio_us_trig, Gpio_Setup::gpio_dir_output, Gpio_Setup::gpio_val_low)), \
-	us_echo(Gpio_Setup::Custom_Gpi(gpio_us_echo, Gpio_Setup::gpio_dir_input)) {		
+	button(Custom_Gpio::Custom_Gpi(gpio_btn, Custom_Gpio::gpio_dir_input)), \
+	puBtn(Custom_Gpio::Custom_Gpo(gpio_puBtn, Custom_Gpio::gpio_dir_output, Custom_Gpio::gpio_val_low)), \
+	led(Custom_Gpio::Custom_Gpo(gpio_LED, Custom_Gpio::gpio_dir_output, Custom_Gpio::gpio_val_low)),  \
+	us_trig(Custom_Gpio::Custom_Gpo(gpio_us_trig, Custom_Gpio::gpio_dir_output, Custom_Gpio::gpio_val_low)), \
+	us_echo(Custom_Gpio::Custom_Gpi(gpio_us_echo, Custom_Gpio::gpio_dir_input)) {
 	
 	// gpioList.push_back(button);
 	// gpioList.push_back(puBtn);
@@ -40,16 +40,16 @@ Gpio_Manager::Gpio_Manager(const Gpio_Manager &other) {
 
 }
 
-Gpio_Manager::Gpio_Manager(Gpio_Manager &&other) {
-	// TODO Auto-generated constructor stub
+// Gpio_Manager::Gpio_Manager(Gpio_Manager &&other) {
+// 	// TODO Auto-generated constructor stub
 
+// }
+
+Gpio_Manager& Gpio_Manager::operator=(const Gpio_Manager &other) {
+	// TODO Auto-generated method stub
+	return *this;
 }
 
-//Gpio_Manager& Gpio_Manager::operator=(const Gpio_Manager &other) {
-//	// TODO Auto-generated method stub
-//
-//}
-//
 //Gpio_Manager& Gpio_Manager::operator=(Gpio_Manager &&other) {
 //	// TODO Auto-generated method stub
 //
@@ -75,39 +75,46 @@ void Gpio_Manager::deinitGpios(void) {
 void Gpio_Manager::setLED(bool val) {
 	if(val)
 	{
-		led.setGpioValue(Gpio_Setup::gpio_val_high);
+		led.setGpioValue(Custom_Gpio::gpio_val_high);
 	} else
 	{
-		led.setGpioValue(Gpio_Setup::gpio_val_low);
+		led.setGpioValue(Custom_Gpio::gpio_val_low);
 	}
 }
 
 void Gpio_Manager::setTrigger(bool val) {
 	if(val)
 	{
-		us_trig.setGpioValue(Gpio_Setup::gpio_val_high);
+		us_trig.setGpioValue(Custom_Gpio::gpio_val_high);
 	} else
 	{
-		us_trig.setGpioValue(Gpio_Setup::gpio_val_low);
+		us_trig.setGpioValue(Custom_Gpio::gpio_val_low);
 	}
 }
 
 void Gpio_Manager::setBtnPullup(bool val) {
 	if(val)
 	{
-		puBtn.setGpioValue(Gpio_Setup::gpio_val_high);
+		puBtn.setGpioValue(Custom_Gpio::gpio_val_high);
 	} else
 	{
-		puBtn.setGpioValue(Gpio_Setup::gpio_val_low);
+		puBtn.setGpioValue(Custom_Gpio::gpio_val_low);
 	}
 }
 
 bool Gpio_Manager::readBtnState(void) {
-	return button.getGpioValue();
+	std::lock_guard<std::mutex> myLockGuard(mu1);
+	if(button.getGpioValue()==Custom_Gpio::gpio_val_high)
+		return true;
+	
+	return false;
 }
 
 bool Gpio_Manager::readEchoState(void) {
-	return us_echo.getGpioValue();
+	if(us_echo.getGpioValue()==Custom_Gpio::gpio_val_high)
+		return true;
+	
+	return false;
 }
 
 } /* namespace CR */

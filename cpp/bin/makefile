@@ -1,9 +1,9 @@
 PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 OBJS = ../src/distance-measurement-rpi.o\
+../src/PDC.o\
 ../src/Gpio_Manager.o\
 ../src/UltrasonicSensor.o\
-../src/PDC.o\
 ../src/Custom_Gpi.o\
 ../src/Custom_Gpo.o\
 ../src/Custom_Gpio.o\
@@ -13,8 +13,9 @@ BUILD_MODE = run
 
 CFLAGS = -std=c++14\
 -O2\
--Wall
-LDFLAGS = 
+-Wall\
+-pthread
+LDFLAGS = -pthread
 
 
 all:	distance-measurement-rpi

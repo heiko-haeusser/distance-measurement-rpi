@@ -9,7 +9,7 @@
 #define CUSTOM_GPIO_H_
 
 #include <string>
-namespace Gpio_Setup {
+namespace Custom_Gpio {
 
 static std::string gpio_dir_input="in";
 static std::string gpio_dir_output="out";
@@ -23,12 +23,12 @@ public:
 	Custom_Gpio(); //constructor
 	Custom_Gpio(int _gpio_number, std::string _gpio_direction); //user defined constructor
 	virtual ~Custom_Gpio(); //distructor
-	Custom_Gpio(const Custom_Gpio &other); //copy constructor
-	Custom_Gpio(Custom_Gpio &&other); //move constructor
-	Custom_Gpio& operator=(const Custom_Gpio &other);
-	Custom_Gpio& operator=(Custom_Gpio &&other);
+	// Custom_Gpio(const Custom_Gpio &other); //copy constructor
+	// Custom_Gpio(Custom_Gpio &&other); //move constructor
+	// Custom_Gpio& operator=(const Custom_Gpio &other);
+	// Custom_Gpio& operator=(Custom_Gpio &&other);
 
-	virtual int setupGpio(void);
+	virtual int setupGpio(void) = 0;
 	int exportGpio(void);
 	int setGpioDir(void);
 	int unexportGpio(void);

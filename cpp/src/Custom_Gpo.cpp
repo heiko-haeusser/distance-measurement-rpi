@@ -11,7 +11,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace Gpio_Setup {
+namespace Custom_Gpio {
 
 Custom_Gpo::Custom_Gpo() {
 	// TODO Auto-generated constructor stub
@@ -28,41 +28,41 @@ Custom_Gpo::~Custom_Gpo() {
 	// TODO Auto-generated destructor stub
 }
 
-Custom_Gpo::Custom_Gpo(const Custom_Gpo &other) {
-	// TODO Auto-generated constructor stub
+// Custom_Gpo::Custom_Gpo(const Custom_Gpo &other) {
+// 	// TODO Auto-generated constructor stub
 
-}
+// }
 
-Custom_Gpo::Custom_Gpo(Custom_Gpo &&other) {
-	// TODO Auto-generated constructor stub
+// Custom_Gpo::Custom_Gpo(Custom_Gpo &&other) {
+// 	// TODO Auto-generated constructor stub
 
-}
+// }
 
-Custom_Gpo& Custom_Gpo::operator=(const Custom_Gpo &other) {
-	// TODO Auto-generated method stub
-	Custom_Gpo copy_instance = Custom_Gpo(other);
-	return copy_instance;
-}
+// Custom_Gpo& Custom_Gpo::operator=(const Custom_Gpo &other) {
+// 	// TODO Auto-generated method stub
+// 	Custom_Gpo copy_instance = Custom_Gpo(other);
+// 	return copy_instance;
+// }
 
-Custom_Gpo& Custom_Gpo::operator=(Custom_Gpo &&other) {
-	// TODO Auto-generated method stub
-	Custom_Gpo copy_instance = std::move(other);
-	other.gpio_direction = gpio_dir_output; //reset to default
-	other.gpio_number = 0; //reset to default
-	return copy_instance;
-}
+// Custom_Gpo& Custom_Gpo::operator=(Custom_Gpo &&other) {
+// 	// TODO Auto-generated method stub
+// 	Custom_Gpo copy_instance = std::move(other);
+// 	other.gpio_direction = gpio_dir_output; //reset to default
+// 	other.gpio_number = 0; //reset to default
+// 	return copy_instance;
+// }
+
 
 int Custom_Gpo::setupGpio(void) {
 	if (exportGpio()==0) {
 		if (setGpioDir()==0) {
 			if (setGpioValue(gpio_value)==0) {
-				std::cout << "GPIO init successful\n";
+				// std::cout << "GPIO init successful\n";
 				return 0;
-
 			}
 		}
 	}
-	std::cout << "GPIO init failed\n";
+	std::cout << "Custom_Gpo: GPIO init failed. GPIO: " << gpio_number << "\n";
 
 	return (-1);
 }
@@ -80,7 +80,7 @@ int Custom_Gpo::setGpioValue(int value) {
 		gpioValueFile << gpio_value;
 
 		gpioValueFile.close();
-		std::cout << "GPIO value set successful\n";
+		// std::cout << "GPIO value set successful\n";
 
 	} else {
 		std::cout << "trigger: GPIO value set failed: " << filename.str() << "\n";

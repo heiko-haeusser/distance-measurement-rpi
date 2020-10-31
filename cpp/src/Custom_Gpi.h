@@ -10,9 +10,9 @@
 
 #include "Custom_Gpio.h"
 
-namespace Gpio_Setup {
+namespace Custom_Gpio {
 
-class Custom_Gpi: public Gpio_Setup::Custom_Gpio {
+class Custom_Gpi: public Custom_Gpio::Custom_Gpio {
 private:
 	int gpio_value = gpio_val_low;
 
@@ -22,9 +22,9 @@ public:
 
 	virtual ~Custom_Gpi();
 	Custom_Gpi(const Custom_Gpi &other);
-	Custom_Gpi(Custom_Gpi &&other);
-	Custom_Gpi& operator=(const Custom_Gpi &other);
-	Custom_Gpi& operator=(Custom_Gpi &&other);
+	// Custom_Gpi(Custom_Gpi &&other);
+	// Custom_Gpi& operator=(const Custom_Gpi &other);
+	// Custom_Gpi& operator=(Custom_Gpi &&other);
 
 	int setupGpio(void);
 	int getGpioValue();
