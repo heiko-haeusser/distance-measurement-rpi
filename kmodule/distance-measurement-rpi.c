@@ -24,7 +24,7 @@ static unsigned int irqNumberBtn = -1;
 static unsigned int irqNumberEcho = -1;
 
 // static int state = 0;
-// static int stateEval = 0;
+static int stateEval = 0;
 
 static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs);
 static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs);
@@ -85,12 +85,15 @@ static int init_gpios(void)
    printk(KERN_ALERT "The interrupt request result is: %d\n", res);
 
    // ######################## Setup GPIO setup end ###########################
+   printk(KERN_ALERT "\n\n---------- initialization of GPIO finished ----------\n\n");
 
    return res;
 }
 
 static int __init rpi_dist_init(void)
 {
+   printk(KERN_ALERT "\n\n----------Task 6 Kernel Module started----------\n\n");
+
    int res = 0; //temporary variable to store the request IRQ result
    res = init_gpios(); //temporary variable to store the request IRQ result
    
@@ -127,6 +130,9 @@ static void __exit rpi_dist_exit(void)
    gpio_free(gpioBtn);
    gpio_free(gpioTrig);
    gpio_free(gpioEcho);
+
+   printk(KERN_ALERT "\n\n----------Task 6 Kernel Module ended----------\n\n");
+
 }
 
 /*
@@ -141,6 +147,17 @@ static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_r
 static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs)
 {
    printk(KERN_ALERT "Interrupt, ECHO pin state is %d\n", gpio_get_value(gpioEcho));
+
+   if(gpio_get_value(gpioEcho)==1) {
+      stateEval = 1;
+   } else if(stateEval==1) {
+      printk(KERN_ALERT "process the echo pin falling edge after rising edge was received\n");
+      stateEval = 0; //reset the evaluation state for the next measurement
+   } else {
+      stateEval = 0; //reset the evaluation state for two falling edges to ignore the measurement
+      printk(KERN_ALERT "ignore this interrupt, because rising edge is missing\n");
+   }
+   
    return (irq_handler_t) IRQ_HANDLED; // Announce that the IRQ has been handled correctly
 }
 
