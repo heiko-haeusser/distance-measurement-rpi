@@ -13,6 +13,8 @@ MODULE_VERSION("1.0");
 
 #define INTERVAL_US (1 * 1000LL) //100ms (scaled in ns)
 #define INTERVAL_MS (1 * 1000000LL) //100ms (scaled in ns)
+#define DISTANCE_FACTOR 10000000 * 343 //strip down the calculation to a minimum
+                                       //let the compiler calculate this, it can do it better 
 
 //GPIO definitions---------------------------
 static unsigned int gpioLED = 23;
@@ -33,6 +35,10 @@ static ktime_t ktime_interval;
 //Helper variables for PDC functionality----
 static int state = 0;
 static int stateEval = 0;
+static unsigned long  start_ts = 0; //set when rising edge detected
+static unsigned long  stop_ts = 0; //set when falling edge detected
+static unsigned long duration = 0;
+static unsigned int distanceCm = 0;
 
 //Callback declarations---------------------
 static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs);
@@ -101,10 +107,10 @@ static int init_gpios(void)
 
 static int __init rpi_dist_init(void)
 {
+   int res = 0; //temporary variable
+
    printk(KERN_ALERT "\n\n----------Task 6 Kernel Module started----------\n\n");
 
-   int res = 0; //temporary variable
-   
    res = init_gpios(); //temporary variable to store the gpio init result
    
    ktime_interval = ktime_set(0, 500*INTERVAL_MS);//seconds,nanoseconds
@@ -166,14 +172,34 @@ static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_r
    return (irq_handler_t) IRQ_HANDLED; // Announce that the IRQ has been handled correctly
 }
 
+static void printPdcStatus(void)
+{
+   duration = stop_ts-start_ts;
+   distanceCm = (duration/2);
+   distanceCm = distanceCm / 343;
+   distanceCm = distanceCm / 100;
+   
+   // printk(KERN_ALERT "duration: %lu \t start:%lu \t stop:%lu\n", duration, start_ts, stop_ts);
+
+   if (distanceCm < 30) {
+		printk(KERN_ALERT "STOP:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
+	} else if (distanceCm <= 100) {
+      printk(KERN_ALERT "WARNING:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
+	} else if (distanceCm < 300) { //exclude wrong measurments
+      printk(KERN_ALERT "OK:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
+	}
+}
+
 static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs)
 {
    // printk(KERN_ALERT "Interrupt, ECHO pin state is %d\n", gpio_get_value(gpioEcho));
 
    if(gpio_get_value(gpioEcho)==1) {
+      start_ts = (unsigned long) ktime_get_ns();
       stateEval = 1;
    } else if(stateEval==1) {
-      printk(KERN_ALERT "process the echo pin falling edge after rising edge was received\n");
+      stop_ts = (unsigned long) ktime_get_ns();      
+      printPdcStatus(); //print the result
       stateEval = 0; //reset the evaluation state for the next measurement
    } else {
       stateEval = 0; //reset the evaluation state for two falling edges to ignore the measurement
@@ -189,18 +215,19 @@ static enum hrtimer_restart procMeasurement(struct hrtimer *unused) {
 		state = 1;
 		gpio_set_value(gpioLED, 1);
 		gpio_set_value(gpioTrig, 1);
-		ktime_interval = ktime_set(0, 100 * INTERVAL_US);
+		ktime_interval = ktime_set(0, 20 * INTERVAL_US); //switch trigger pin off after 20us
 		// printk(KERN_ALERT "----------Trigger set ----------\n");
 		break;
 	case 1:
 		state = 2;
 		gpio_set_value(gpioTrig, 0);
+      ktime_interval = ktime_set(0, 50 * INTERVAL_MS); //switch LED off after 50ms
 		// printk(KERN_ALERT "----------Trigger cleared ----------\n");
 		break;
 	case 2:
 		state = 0;
 		gpio_set_value(gpioLED, 0);
-		ktime_interval = ktime_set(0, 950 * INTERVAL_MS);
+		ktime_interval = ktime_set(0, 450 * INTERVAL_MS); //trigger new measurement after 500ms (450+50 from LED)
 		// printk(KERN_ALERT "----------LED cleared ----------\n");
 		break;
 	default:
