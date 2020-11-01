@@ -4,6 +4,7 @@
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
 #include <linux/delay.h>
+#include <linux/hrtimer.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Heiko Haeusser");
@@ -13,19 +14,27 @@ MODULE_VERSION("1.0");
 #define INTERVAL_US (1 * 1000LL) //100ms (scaled in ns)
 #define INTERVAL_MS (1 * 1000000LL) //100ms (scaled in ns)
 
+//GPIO definitions---------------------------
 static unsigned int gpioLED = 23;
 static unsigned int gpioBtn = 26;
 static unsigned int gpioPuBtn = 13;
 static unsigned int gpioTrig = 18;
 static unsigned int gpioEcho = 24;
 
-
+//IRQ definitions---------------------------
 static unsigned int irqNumberBtn = -1;
 static unsigned int irqNumberEcho = -1;
 
-// static int state = 0;
+//HRTIMER definitions-----------------------
+static enum hrtimer_restart procMeasurement(struct hrtimer*);
+static struct hrtimer htimer;
+static ktime_t ktime_interval;
+
+//Helper variables for PDC functionality----
+static int state = 0;
 static int stateEval = 0;
 
+//Callback declarations---------------------
 static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs);
 static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs);
 
@@ -94,22 +103,34 @@ static int __init rpi_dist_init(void)
 {
    printk(KERN_ALERT "\n\n----------Task 6 Kernel Module started----------\n\n");
 
-   int res = 0; //temporary variable to store the request IRQ result
-   res = init_gpios(); //temporary variable to store the request IRQ result
+   int res = 0; //temporary variable
    
-   msleep(1);
-
-   gpio_set_value(gpioTrig,1);
-
-   msleep(1);
+   res = init_gpios(); //temporary variable to store the gpio init result
    
-   gpio_set_value(gpioTrig, 0);
+   ktime_interval = ktime_set(0, 500*INTERVAL_MS);//seconds,nanoseconds
+   hrtimer_init (& htimer, CLOCK_REALTIME, HRTIMER_MODE_REL);
+   htimer.function = procMeasurement;
+   hrtimer_start(& htimer, ktime_interval, HRTIMER_MODE_REL);
 
+/*
+   //only for testing purpose of echo IRQ
+   // msleep(1);
+   // gpio_set_value(gpioTrig,1);
+   // msleep(1);   
+   // gpio_set_value(gpioTrig, 0);
+*/
    return res;
 }
 
 static void __exit rpi_dist_exit(void)
 {
+   int ret = 0;
+   ret = hrtimer_cancel( &htimer);
+   if (ret) {
+      printk("mod_hrtimer: The timer was still in use...\n");
+      printk("mod_hrtimer: HR Timer module uninstalling\n");
+   }
+
    gpio_set_value(gpioLED, 0);
    gpio_unexport(gpioLED);
 
@@ -131,8 +152,9 @@ static void __exit rpi_dist_exit(void)
    gpio_free(gpioTrig);
    gpio_free(gpioEcho);
 
-   printk(KERN_ALERT "\n\n----------Task 6 Kernel Module ended----------\n\n");
+   destroy_hrtimer_on_stack(&htimer);
 
+   printk(KERN_ALERT "\n\n----------Task 6 Kernel Module ended----------\n\n");
 }
 
 /*
@@ -146,7 +168,7 @@ static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_r
 
 static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs)
 {
-   printk(KERN_ALERT "Interrupt, ECHO pin state is %d\n", gpio_get_value(gpioEcho));
+   // printk(KERN_ALERT "Interrupt, ECHO pin state is %d\n", gpio_get_value(gpioEcho));
 
    if(gpio_get_value(gpioEcho)==1) {
       stateEval = 1;
@@ -159,6 +181,35 @@ static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_
    }
    
    return (irq_handler_t) IRQ_HANDLED; // Announce that the IRQ has been handled correctly
+}
+
+static enum hrtimer_restart procMeasurement(struct hrtimer *unused) {
+	switch (state) {
+	case 0:
+		state = 1;
+		gpio_set_value(gpioLED, 1);
+		gpio_set_value(gpioTrig, 1);
+		ktime_interval = ktime_set(0, 100 * INTERVAL_US);
+		// printk(KERN_ALERT "----------Trigger set ----------\n");
+		break;
+	case 1:
+		state = 2;
+		gpio_set_value(gpioTrig, 0);
+		// printk(KERN_ALERT "----------Trigger cleared ----------\n");
+		break;
+	case 2:
+		state = 0;
+		gpio_set_value(gpioLED, 0);
+		ktime_interval = ktime_set(0, 950 * INTERVAL_MS);
+		// printk(KERN_ALERT "----------LED cleared ----------\n");
+		break;
+	default:
+   	printk(KERN_ALERT "\n\n----------this should never be excecuted..----------n\n");
+
+		break;
+	}
+	hrtimer_forward_now(&htimer, ktime_interval);
+	return HRTIMER_RESTART;
 }
 
 module_init(rpi_dist_init);
