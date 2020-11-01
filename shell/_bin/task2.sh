@@ -28,7 +28,6 @@ if ls /etc/blinking/ | grep --quiet interval; then
 else
 	echo create interval file and define standard frequency to 1Hz > /dev/ttyS0
 	touch /etc/blinking/interval
-	1 > /etc/blinking/interval
 	echo 1 > /etc/blinking/interval
 fi
 

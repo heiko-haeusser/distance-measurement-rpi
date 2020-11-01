@@ -62,7 +62,7 @@ static int init_gpios(void)
 
    // setup the IRQ for the button
    irqNumberBtn = gpio_to_irq(gpioBtn);
-   printk(KERN_ALERT "The button is mapped to IRQ: %d\n", irqNumberBtn);
+   printk(KERN_INFO "The button is mapped to IRQ: %d\n", irqNumberBtn);
       
    res = request_irq(irqNumberBtn,
                         (irq_handler_t) btn_irq_handler,
@@ -70,7 +70,7 @@ static int init_gpios(void)
                         "btn_gpio_handler", // Used in /proc/interrupts as id
                         NULL);
 
-   printk(KERN_ALERT "The interrupt request result is: %d\n", res);
+   printk(KERN_INFO "The interrupt request result is: %d\n", res);
 
    // Setup the LED---------------------------------------------------------
    gpio_request(gpioLED, "sysfs");
@@ -89,7 +89,7 @@ static int init_gpios(void)
 
    // setup the IRQ for the echo
    irqNumberEcho = gpio_to_irq(gpioEcho);
-   printk(KERN_ALERT "The echo is mapped to IRQ: %d\n", irqNumberEcho);
+   printk(KERN_INFO "The echo is mapped to IRQ: %d\n", irqNumberEcho);
       
    res = request_irq(irqNumberEcho,
                         (irq_handler_t) echo_irq_handler,
@@ -97,10 +97,10 @@ static int init_gpios(void)
                         "echo_gpio_handler", // Used in /proc/interrupts as id
                         NULL);
 
-   printk(KERN_ALERT "The interrupt request result is: %d\n", res);
+   printk(KERN_INFO "The interrupt request result is: %d\n", res);
 
    // ######################## Setup GPIO setup end ###########################
-   printk(KERN_ALERT "\n\n---------- initialization of GPIO finished ----------\n\n");
+   printk(KERN_INFO "\n\n---------- initialization of GPIO finished ----------\n\n");
 
    return res;
 }
@@ -109,7 +109,7 @@ static int __init rpi_dist_init(void)
 {
    int res = 0; //temporary variable
 
-   printk(KERN_ALERT "\n\n----------Task 6 Kernel Module started----------\n\n");
+   printk(KERN_INFO "\n\n----------Task 6 Kernel Module started----------\n\n");
 
    res = init_gpios(); //temporary variable to store the gpio init result
    
@@ -160,7 +160,7 @@ static void __exit rpi_dist_exit(void)
 
    destroy_hrtimer_on_stack(&htimer);
 
-   printk(KERN_ALERT "\n\n----------Task 6 Kernel Module ended----------\n\n");
+   printk(KERN_INFO "\n\n----------Task 6 Kernel Module ended----------\n\n");
 }
 
 /*
@@ -168,7 +168,7 @@ static void __exit rpi_dist_exit(void)
  */
 static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs)
 {
-	printk(KERN_ALERT "Interrupt, BUTTON state is %d\n", gpio_get_value(gpioBtn));
+	printk(KERN_INFO "Interrupt, BUTTON state is %d\n", gpio_get_value(gpioBtn));
    //rpi_dist_exit(); here it was planned to stop the kernel module, but invoking the exit function is not a good idea.. :D
    return (irq_handler_t) IRQ_HANDLED; // Announce that the IRQ has been handled correctly
 }
@@ -180,20 +180,20 @@ static void printPdcStatus(void)
    distanceCm = distanceCm / 343;
    distanceCm = distanceCm / 100;
    
-   // printk(KERN_ALERT "duration: %lu \t start:%lu \t stop:%lu\n", duration, start_ts, stop_ts);
+   // printk(KERN_INFO "duration: %lu \t start:%lu \t stop:%lu\n", duration, start_ts, stop_ts);
 
    if (distanceCm < 30) {
-		printk(KERN_ALERT "STOP:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
+		printk(KERN_INFO "STOP:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
 	} else if (distanceCm <= 100) {
-      printk(KERN_ALERT "WARNING:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
+      printk(KERN_INFO "WARNING:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
 	} else if (distanceCm < 300) { //exclude wrong measurments
-      printk(KERN_ALERT "OK:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
+      printk(KERN_INFO "OK:\t\t distance is %dcm \t %d,%dm\n", distanceCm, distanceCm/100,distanceCm-(distanceCm/100));
 	}
 }
 
 static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs)
 {
-   // printk(KERN_ALERT "Interrupt, ECHO pin state is %d\n", gpio_get_value(gpioEcho));
+   // printk(KERN_INFO "Interrupt, ECHO pin state is %d\n", gpio_get_value(gpioEcho));
 
    if(gpio_get_value(gpioEcho)==1) {
       start_ts = (unsigned long) ktime_get_ns();
@@ -204,7 +204,7 @@ static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_
       stateEval = 0; //reset the evaluation state for the next measurement
    } else {
       stateEval = 0; //reset the evaluation state for two falling edges to ignore the measurement
-      printk(KERN_ALERT "ignore this interrupt, because rising edge is missing\n");
+      printk(KERN_INFO "ignore this interrupt, because rising edge is missing\n");
    }
    
    return (irq_handler_t) IRQ_HANDLED; // Announce that the IRQ has been handled correctly
@@ -217,22 +217,22 @@ static enum hrtimer_restart procMeasurement(struct hrtimer *unused) {
 		gpio_set_value(gpioLED, 1);
 		gpio_set_value(gpioTrig, 1);
 		ktime_interval = ktime_set(0, 20 * INTERVAL_US); //switch trigger pin off after 20us
-		// printk(KERN_ALERT "----------Trigger set ----------\n");
+		// printk(KERN_INFO "----------Trigger set ----------\n");
 		break;
 	case 1:
 		state = 2;
 		gpio_set_value(gpioTrig, 0);
       ktime_interval = ktime_set(0, 50 * INTERVAL_MS); //switch LED off after 50ms
-		// printk(KERN_ALERT "----------Trigger cleared ----------\n");
+		// printk(KERN_INFO "----------Trigger cleared ----------\n");
 		break;
 	case 2:
 		state = 0;
 		gpio_set_value(gpioLED, 0);
 		ktime_interval = ktime_set(0, 450 * INTERVAL_MS); //trigger new measurement after 500ms (450+50 from LED)
-		// printk(KERN_ALERT "----------LED cleared ----------\n");
+		// printk(KERN_INFO "----------LED cleared ----------\n");
 		break;
 	default:
-   	printk(KERN_ALERT "\n\n----------this should never be excecuted..----------n\n");
+   	printk(KERN_INFO "\n\n----------this should never be excecuted..----------n\n");
 
 		break;
 	}
