@@ -3,6 +3,7 @@
 #include <linux/kernel.h>
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
+#include <linux/delay.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Heiko Haeusser");
@@ -22,25 +23,23 @@ static unsigned int gpioEcho = 24;
 static unsigned int irqNumberBtn = -1;
 static unsigned int irqNumberEcho = -1;
 
-static int state = 0;
+// static int state = 0;
 // static int stateEval = 0;
 
-static bool ledOn = 0;
+static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs);
+static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs);
 
-static irq_handler_t btn_irq_handler(unsigned int irq,
-                                         void* dev_id,
-                                         struct pt_regs* regs);
-
-static int __init rpi_dist_init(void)
+static int init_gpios(void) 
 {
    int res = 0; //temporary variable to store the request IRQ result
 
-   // Set the pullup for the button to 1
+   // ######################## Setup GPIO setup start ###########################
+   // Set the pullup for the button to 1-----------------------------------
    gpio_request(gpioPuBtn, "sysfs");
    gpio_direction_output(gpioPuBtn, 1);
    gpio_export(gpioPuBtn, false);     
 
-   // Setup the button
+   // Setup the button-----------------------------------------------------
    gpio_request(gpioBtn, "sysfs");
    gpio_direction_input(gpioBtn);
    gpio_set_debounce(gpioBtn, 200); 
@@ -53,17 +52,56 @@ static int __init rpi_dist_init(void)
    res = request_irq(irqNumberBtn,
                         (irq_handler_t) btn_irq_handler,
                         IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
-                        "my_gpio_handler", // Used in /proc/interrupts as id
+                        "btn_gpio_handler", // Used in /proc/interrupts as id
                         NULL);
 
    printk(KERN_ALERT "The interrupt request result is: %d\n", res);
 
-   // Setup the LED
-   ledOn = true;
+   // Setup the LED---------------------------------------------------------
    gpio_request(gpioLED, "sysfs");
    gpio_direction_output(gpioLED, 0); 
    gpio_export(gpioLED, false);   
+
+   // Setup the trigger pin-------------------------------------------------
+   gpio_request(gpioTrig, "sysfs");
+   gpio_direction_output(gpioTrig, 0); 
+   gpio_export(gpioTrig, false);   
+
+   // Setup the echo pin----------------------------------------------------
+   gpio_request(gpioEcho, "sysfs");
+   gpio_direction_input(gpioEcho);
+   gpio_export(gpioEcho, false);
+
+   // setup the IRQ for the echo
+   irqNumberEcho = gpio_to_irq(gpioEcho);
+   printk(KERN_ALERT "The echo is mapped to IRQ: %d\n", irqNumberEcho);
+      
+   res = request_irq(irqNumberEcho,
+                        (irq_handler_t) echo_irq_handler,
+                        IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+                        "echo_gpio_handler", // Used in /proc/interrupts as id
+                        NULL);
+
+   printk(KERN_ALERT "The interrupt request result is: %d\n", res);
+
+   // ######################## Setup GPIO setup end ###########################
+
+   return res;
+}
+
+static int __init rpi_dist_init(void)
+{
+   int res = 0; //temporary variable to store the request IRQ result
+   res = init_gpios(); //temporary variable to store the request IRQ result
    
+   msleep(1);
+
+   gpio_set_value(gpioTrig,1);
+
+   msleep(1);
+   
+   gpio_set_value(gpioTrig, 0);
+
    return res;
 }
 
@@ -96,7 +134,13 @@ static void __exit rpi_dist_exit(void)
  */
 static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs)
 {
-   printk(KERN_ALERT "Interrupt, button state is %d\n", gpio_get_value(gpioBtn));
+   printk(KERN_ALERT "Interrupt, BUTTON state is %d\n", gpio_get_value(gpioBtn));
+   return (irq_handler_t) IRQ_HANDLED; // Announce that the IRQ has been handled correctly
+}
+
+static irq_handler_t echo_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs)
+{
+   printk(KERN_ALERT "Interrupt, ECHO pin state is %d\n", gpio_get_value(gpioEcho));
    return (irq_handler_t) IRQ_HANDLED; // Announce that the IRQ has been handled correctly
 }
 
