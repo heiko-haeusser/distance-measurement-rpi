@@ -17,10 +17,18 @@ echo "Task 2: blinky started..."
 sudo bash /opt/hw_init.sh
 # define the blinking interval in the file /etc/blinking/interval to adjust interval frequency from the outside
 # this is forehold for future tasks
+if ls /etc/ | grep --quiet blinking; then
+	echo interval dir already exists > /dev/ttyS0
+else
+	echo create dir /etc/blinking/ > /dev/ttyS0
+	sudo mkdir /etc/blinking/
+fi
 if ls /etc/blinking/ | grep --quiet interval; then
 	echo interval file already exists > /dev/ttyS0
 else
 	echo create interval file and define standard frequency to 1Hz > /dev/ttyS0
+	touch /etc/blinking/interval
+	1 > /etc/blinking/interval
 	echo 1 > /etc/blinking/interval
 fi
 
