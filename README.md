@@ -201,17 +201,23 @@ The Parking Distance Component implements controls the LED according to the meas
 .<br />
 
 ### Task 4: Systemd service unit
-Write a service unit that starts the PDC C++ application at boot time (target multi-user).
+Write a service unit that starts the PDC C++ application at boot time (target multi-user).<br />
+Just small adjustments in the distance-measurement-rpi.service file. See install.sh for further information. <br />
 
+This one is mostly recycled from excercises of this week, if solved an easy one.<br />
 ### Task 5: Logging & logging filesystem
-Write a timer unit that runs a script that writes current RAM and CPU usage every 5s into
-a file stored on a tmpfs.
+Write a timer unit that runs a script that writes current RAM and CPU usage every 5s into a file stored on a tmpfs.<br />
 
+This was completely solved using the man pages (tempfs, top) and the internet (CPU usage :))<br />
+If solved correctly, also an easy one.
 ### Task 6: Custom kernel module
 Write a simple kernel module that can be loaded. Implement the distance measurement
 from Task 3 as part of this module with an interval of 500 ms. Between each measurement
 the connected LED shall flash for 50 ms. For test purposes the measured distance
 shall be printed to the kernel log.
+
+Initial consideration:
+Jiffies do not offer the necessary 
 
 
 
