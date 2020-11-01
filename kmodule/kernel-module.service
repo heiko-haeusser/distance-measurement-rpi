@@ -1,0 +1,6 @@
+[Unit]
+Description=service which starts kernel module distance measurement app
+[Service]
+ExecStart=/usr/local/task-6/km.sh 
+[Install]
+WantedBy=multi-user.target

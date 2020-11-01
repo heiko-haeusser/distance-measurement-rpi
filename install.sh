@@ -78,26 +78,38 @@ else
 			mkdir /usr/local/task-6/
 			copyFiles distance-measurement-rpi.ko /usr/local/task-6/
 
+			sudo chmod +x km.sh
+			copyFiles km.sh /usr/local/task-6/
+			
+			copyFiles kernel-module.service /etc/systemd/system/kernel-module.service
+			sudo systemctl enable kernel-module.service
+
 			echo "Script for task6 is now available at: /usr/local/task-6/distance-measurement-rpi.ko"
+			echo "service for task6 is now available at: /etc/systemd/system/km.service"
+			echo "script for task6 is now available at: /usr/local/task-6/km.sh"
 
 		else
-			echo "please choose which app you want to install (-cpp, -km or -bash as argument)"
-			exit -1
+			if [[ $1 == -task5 ]]; then
+					
+				# Task 5 mount tempfs at /media/sensor_logs/ and story every 5s CPU and RAM load
+				sudo mkdir /usr/local/task-5/
+
+				sudo chmod +x log/cpu-and-ram-tempfs-log.sh
+				copyFiles log/cpu-and-ram-tempfs-log.sh /usr/local/task-5/cpu-and-ram-tempfs-log.sh
+
+				copyFiles log/cpu-and-ram-tempfs-log.timer /etc/systemd/system/cpu-and-ram-tempfs-log.timer
+				sudo systemctl enable cpu-and-ram-tempfs-log.timer
+
+				copyFiles log/cpu-and-ram-tempfs-log.service /etc/systemd/system/cpu-and-ram-tempfs-log.service
+				echo "CPU and RAM logging is now installed and active on reboot. (available at /media/sensor_logs/ram_and_cpu_load.txt)"
+
+			else
+				echo "please choose which app you want to install (-cpp, -km, -bash or -task5 as argument)"
+				exit -1
+			fi
 		fi
 	fi
 
 fi
-
-# Task 5 mount tempfs at /media/sensor_logs/ and story every 5s CPU and RAM load
-sudo mkdir /usr/local/task-5/
-
-sudo chmod +x log/cpu-and-ram-tempfs-log.sh
-copyFiles log/cpu-and-ram-tempfs-log.sh /usr/local/task-5/cpu-and-ram-tempfs-log.sh
-
-copyFiles log/cpu-and-ram-tempfs-log.timer /etc/systemd/system/cpu-and-ram-tempfs-log.timer
-sudo systemctl enable cpu-and-ram-tempfs-log.timer
-
-copyFiles log/cpu-and-ram-tempfs-log.service /etc/systemd/system/cpu-and-ram-tempfs-log.service
-echo "CPU and RAM logging is now installed and active on reboot. (available at /media/sensor_logs/ram_and_cpu_load.txt)"
 
 echo "install routine finished"
