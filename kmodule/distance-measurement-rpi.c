@@ -66,7 +66,7 @@ static int init_gpios(void)
       
    res = request_irq(irqNumberBtn,
                         (irq_handler_t) btn_irq_handler,
-                        IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+                        IRQF_TRIGGER_RISING,
                         "btn_gpio_handler", // Used in /proc/interrupts as id
                         NULL);
 
@@ -168,7 +168,8 @@ static void __exit rpi_dist_exit(void)
  */
 static irq_handler_t btn_irq_handler(unsigned int irq, void* dev_id, struct pt_regs* regs)
 {
-   printk(KERN_ALERT "Interrupt, BUTTON state is %d\n", gpio_get_value(gpioBtn));
+	printk(KERN_ALERT "Interrupt, BUTTON state is %d\n", gpio_get_value(gpioBtn));
+   //rpi_dist_exit(); here it was planned to stop the kernel module, but invoking the exit function is not a good idea.. :D
    return (irq_handler_t) IRQ_HANDLED; // Announce that the IRQ has been handled correctly
 }
 

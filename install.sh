@@ -39,10 +39,12 @@ if [[ $1 == -cpp ]]; then
 	cd cpp/bin/
 	make
 	mkdir /usr/local/task-3/
+	
 	copyFiles distance-measurement-rpi /usr/local/task-3/
 
 	cd ../../
 
+	#the part of task 4 is here
 	copyFiles services/distance-measurement-rpi.service /etc/systemd/system/distance-measurement-rpi.service
 	sudo systemctl enable distance-measurement-rpi.service
 
@@ -60,6 +62,8 @@ else
 		# copy shell script for task 2 to /usr/local
 
 		sudo chmod +x shell/_bin/task2.sh
+		mkdir /usr/local/task-2/
+
 		copyFiles shell/_bin/task2.sh /usr/local/task-2/task2.sh
 
 		echo "Script for hw init is now available at: /opt/hw_init.sh"
@@ -74,10 +78,10 @@ else
 			mkdir /usr/local/task-6/
 			copyFiles distance-measurement-rpi.ko /usr/local/task-6/
 
-			echo "Script for task2 is now available at: /usr/local/task-6/distance-measurement-rpi.ko"
+			echo "Script for task6 is now available at: /usr/local/task-6/distance-measurement-rpi.ko"
 
 		else
-			echo "please choose which app you want to install (-cpp or -bash as argument)"
+			echo "please choose which app you want to install (-cpp, -km or -bash as argument)"
 			exit -1
 		fi
 	fi
@@ -85,6 +89,8 @@ else
 fi
 
 # Task 5 mount tempfs at /media/sensor_logs/ and story every 5s CPU and RAM load
+sudo mkdir /usr/local/task-5/
+
 sudo chmod +x log/cpu-and-ram-tempfs-log.sh
 copyFiles log/cpu-and-ram-tempfs-log.sh /usr/local/task-5/cpu-and-ram-tempfs-log.sh
 
