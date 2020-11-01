@@ -232,7 +232,7 @@ timer func:
 
 The echo and duration of the pulse is solved via IRQ for the echo pin which stores the timestamp and evaluates the distance if the result is valid.
 
-## About The Project
+## Conclusion
 
 
 
