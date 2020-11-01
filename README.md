@@ -29,6 +29,7 @@
 * [Installation](#installation)
 * [Usage](#usage)
 * [Roadmap](#roadmap)
+* [Conclusion](#conclusion)
 * [License](#license)
 * [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
@@ -190,7 +191,7 @@ The Ultrasonic Sensor Component implements an abstracted interface to the ultras
 	const Gpio_Manager& getGpioMgr();
 	void setGpioMgr(const Gpio_Manager &gpioMgr);
 ```
-##### 3. Parking Distance Component
+##### 4. Parking Distance Component
 The Parking Distance Component implements controls the LED according to the measured distance from the Ultrasonic Sensor Component.
 
 ```sh
@@ -217,11 +218,27 @@ the connected LED shall flash for 50 ms. For test purposes the measured distance
 shall be printed to the kernel log.
 
 Initial consideration:
-Jiffies do not offer the necessary 
+Jiffies do not offer the necessary precision for the timer. I did already a little research during this week on timers and linux (because of preemt_rt), therefore I decided to use hrtimer instead.
+
+SW Architecture:
+Due to the fact that the solution will be a little simpler to solve than the OO solution from Task 3, the SW Architecture is also different.
+
+What do we need:
+A timer which initiates a distance measurement (and switches the LED).
+
+timer func:
+- when trigger, set LED => timer value ~15us.
+- when no trigger, clear LED => timer value ~500ms. (next measurement)
+
+The echo and duration of the pulse is solved via IRQ for the echo pin which stores the timestamp and evaluates the distance if the result is valid.
+
+## About The Project
 
 
 
 <!-- LICENSE -->
+
+
 ## License
 
 Distributed under the GPLv3 License. See [LICENSE](https://github.com/heiko-haeusser/distance-measurement-rpi/blob/main/LICENSE) for more information.
