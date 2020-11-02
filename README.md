@@ -227,14 +227,29 @@ What do we need:
 A timer which initiates a distance measurement (and switches the LED).
 
 timer func:
-- when trigger, set LED => timer value ~15us.
-- when no trigger, clear LED => timer value ~500ms. (next measurement)
+a simple state machine is implemented to control output pins<br />
+- state 0: set LED and trigger pin to 1 => timer value set to 15us.<br />
+- state 1: clear trigger pin to 0 => timer value set to 50ms.<br />
+- state 2: clear LED pin to 0, clear state to initial state 0 => timer value set to 450ms.<br />
 
-The echo and duration of the pulse is solved via IRQ for the echo pin which stores the timestamp and evaluates the distance if the result is valid.
+
+The echo and duration of the pulse is solved via IRQ for the echo pin which stores the timestamp and evaluates the distance if the result is valid.<br />
+I observed that sometimes two falling edges are processed without a rising edge inbetween. Due that the condition to evaluate the measurement was modified to only calculate if a rising edge was detected before the falling edge is processed.<br />
 
 ## Conclusion
 
-will follow tomorrow morning ;)
+The whole week and the final project were challenging, but doable. <br />
+Many thanks to our linux coach Alexander Nassian, who did great classes and gave a very deep insight in Linux and Bash.
+The development of project was a lot of fun and very interesting, especially the little hickups when the project grew up.
+One interesting finding was in the final test it pointed out that the kernel module could not be built because of missing dependencies. <br />
+Here is how I solved it: Upgrade of the kernel and install of the headers<br />
+```sh
+	sudo apt-get dist-upgrade
+	apt-get install linux-headers-$(uname -r)
+	
+	oid toggleLED(void); //toggle the LED with the updated frequency from the measurement thread
+```
+.<br />
 
 
 <!-- LICENSE -->
