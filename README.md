@@ -247,9 +247,7 @@ Here is how I solved it: Upgrade of the kernel and install of the headers<br />
 	sudo apt-get dist-upgrade
 	apt-get install linux-headers-$(uname -r)
 	
-	oid toggleLED(void); //toggle the LED with the updated frequency from the measurement thread
 ```
-.<br />
 
 
 <!-- LICENSE -->
