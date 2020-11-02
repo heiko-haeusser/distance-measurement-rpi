@@ -1,0 +1,10 @@
+[Unit]
+Description=service for usb mount/unmount
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/local/mount-usb.sh add %i
+ExecStop=/usr/local/mount-usb.sh remove %i
+[Install]
+WantedBy=multi-user.target
+
