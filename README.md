@@ -49,10 +49,8 @@ Logging on USB with automatically mounted storage is planned for the future.
 The Board has the following IO configuration:<br />
 <table>
 	<thead>
-		<th>
-			<td style="text-align: center">>Function</td>
-			<td style="text-align: center">>GPIO</td>
-		</th>
+		<td style="text-align: center">>Function</td>
+		<td style="text-align: center">>GPIO</td>
 	</thead>
 	<tbody>
 		<tr>
@@ -76,11 +74,6 @@ The Board has the following IO configuration:<br />
 			<td style="text-align: center">>GPIO24</td>
 		</tr>
 	</tbody>
-</table> 	GPIO26_<br />
-_LED 		GPIO23_<br />
-_Ultrasonic Sensor_<br />
-_Trigger	GPIO18_<br />
-_Echo		GPIO24_<br />
 
 
 
