@@ -60,6 +60,10 @@ The Board has the following IO configuration:<br />
 			<td style="text-align: center">GPIO26</td>
 		</tr>
 		<tr>
+			<td style="text-align: center">Pullup Button</td>
+			<td style="text-align: center">GPIO13</td>
+		</tr>
+		<tr>
 			<td style="text-align: center">LED</td>
 			<td style="text-align: center">GPIO23</td>
 		</tr>
