@@ -47,14 +47,36 @@ Logging on USB with automatically mounted storage is planned for the future.
 ##!!!Important Notice: All the tasks for distance measurement are designed to run until the button is pressed!!!
 
 The Board has the following IO configuration:<br />
-
-|Button|GPIO26|
-|LED|GPIO23|
-|UltrasonicSensor| |
-|Trigger|GPIO18|
-|Echo|GPIO24|
-
-_Button 	GPIO26_<br />
+<table>
+	<thead>
+		<th>
+			<td style="text-align: center">>Function</td>
+			<td style="text-align: center">>GPIO</td>
+		</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td style="text-align: center">>Button</td>
+			<td style="text-align: center">>GPIO26</td>
+		</tr>
+		<tr>
+			<td style="text-align: center">>LED</td>
+			<td style="text-align: center">>GPIO23</td>
+		</tr>
+		<tr>
+			<td style="text-align: center">>UltrasonicSensor</td>
+			<td style="text-align: center">> </td>
+		</tr>
+		<tr>
+			<td style="text-align: center">>Trigger</td>
+			<td style="text-align: center">>GPIO18</td>
+		</tr>
+		<tr>
+			<td style="text-align: center">>Echo</td>
+			<td style="text-align: center">>GPIO24</td>
+		</tr>
+	</tbody>
+</table> 	GPIO26_<br />
 _LED 		GPIO23_<br />
 _Ultrasonic Sensor_<br />
 _Trigger	GPIO18_<br />
