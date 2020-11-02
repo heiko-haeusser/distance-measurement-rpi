@@ -49,32 +49,34 @@ Logging on USB with automatically mounted storage is planned for the future.
 The Board has the following IO configuration:<br />
 <table>
 	<thead>
-		<td style="text-align: center">>Function</td>
-		<td style="text-align: center">>GPIO</td>
+		<tr>
+			<td style="text-align: center" size="8"><b>Function</b></td>
+			<td style="text-align: center" size="15"><b>GPIO</b></td>
+		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td style="text-align: center">>Button</td>
-			<td style="text-align: center">>GPIO26</td>
+			<td style="text-align: center">Button</td>
+			<td style="text-align: center">GPIO26</td>
 		</tr>
 		<tr>
-			<td style="text-align: center">>LED</td>
-			<td style="text-align: center">>GPIO23</td>
+			<td style="text-align: center">LED</td>
+			<td style="text-align: center">GPIO23</td>
 		</tr>
 		<tr>
-			<td style="text-align: center">>UltrasonicSensor</td>
-			<td style="text-align: center">> </td>
+			<td style="text-align: center">UltrasonicSensor</td>
+			<td style="text-align: center"> </td>
 		</tr>
 		<tr>
-			<td style="text-align: center">>Trigger</td>
-			<td style="text-align: center">>GPIO18</td>
+			<td style="text-align: center">Trigger</td>
+			<td style="text-align: center">GPIO18</td>
 		</tr>
 		<tr>
-			<td style="text-align: center">>Echo</td>
-			<td style="text-align: center">>GPIO24</td>
+			<td style="text-align: center">Echo</td>
+			<td style="text-align: center">GPIO24</td>
 		</tr>
 	</tbody>
-
+</table>
 
 
 ### The project can be separated in the following main tasks:
