@@ -238,9 +238,9 @@ I observed that sometimes two falling edges are processed without a rising edge 
 
 ## Conclusion
 
-The whole week and the final project were challenging, but doable. <br />
-Many thanks to our linux coach Alexander Nassian, who did great classes and gave a very deep insight in Linux and Bash.
-The development of project was a lot of fun and very interesting, especially the little hickups when the project grew up.
+The whole week and the final project were challenging, but doable. <br /><br />
+Many thanks to our linux coach Alexander Nassian, who did great classes and gave a very deep insight in Linux and Bash.<br /><br />
+The development of project was a lot of fun and very interesting, especially the little hickups when the project grew up.<br />
 One interesting finding was in the final test it pointed out that the kernel module could not be built because of missing dependencies. <br />
 Here is how I solved it: Upgrade of the kernel and install of the headers<br />
 ```sh
@@ -249,6 +249,7 @@ Here is how I solved it: Upgrade of the kernel and install of the headers<br />
 	
 ```
 
+During this week I'll add also some videos and screenshots to show the functionality.
 
 <!-- LICENSE -->
 
