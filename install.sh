@@ -20,8 +20,19 @@ function copyFiles {
 		echo cp $1 $2
 		cp $1 $2
 	else
-		echo ERROR: $1 not found
+		echo Install Copy ERROR: $1 not found
 		exit -1
+	fi
+}
+
+function make_dir {
+	#arg1 = folder to create
+	
+	if [ -d "$1" ]; then
+		echo dir $1 already exists 
+	else
+		echo create dir $1
+		sudo mkdir $1
 	fi
 }
 
@@ -38,7 +49,7 @@ if [[ $1 == -cpp ]]; then
 
 	cd cpp/bin/
 	make
-	mkdir /usr/local/task-3/
+	make_dir /usr/local/task-3/
 	
 	copyFiles distance-measurement-rpi /usr/local/task-3/
 
@@ -62,7 +73,7 @@ else
 		# copy shell script for task 2 to /usr/local
 
 		sudo chmod +x shell/_bin/task2.sh
-		mkdir /usr/local/task-2/
+		make_dir /usr/local/task-2/
 
 		copyFiles shell/_bin/task2.sh /usr/local/task-2/task2.sh
 
@@ -75,7 +86,7 @@ else
 
 			cd kmodule/
 			make
-			mkdir /usr/local/task-6/
+			make_dir /usr/local/task-6/
 			copyFiles distance-measurement-rpi.ko /usr/local/task-6/
 
 			sudo chmod +x km.sh
@@ -92,7 +103,7 @@ else
 			if [[ $1 == -task5 ]]; then
 					
 				# Task 5 mount tempfs at /media/sensor_logs/ and story every 5s CPU and RAM load
-				sudo mkdir /usr/local/task-5/
+				make_dir /usr/local/task-5/
 
 				sudo chmod +x log/cpu-and-ram-tempfs-log.sh
 				copyFiles log/cpu-and-ram-tempfs-log.sh /usr/local/task-5/cpu-and-ram-tempfs-log.sh
@@ -113,3 +124,4 @@ else
 fi
 
 echo "install routine finished"
+
