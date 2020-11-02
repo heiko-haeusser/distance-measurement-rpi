@@ -49,7 +49,7 @@ Logging on USB with automatically mounted storage is planned for the future.
 The Board has the following IO configuration:<br />
 |_Button_	|GPIO26_	|
 |_LED_	|GPIO23_	|
-|_Ultrasonic_Sensor_	|	|
+|_Ultrasonic_Sensor_	|---	|
 |_Trigger_	|_GPIO18_	|
 |_Echo_	|_GPIO24_	|
 
