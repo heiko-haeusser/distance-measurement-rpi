@@ -73,12 +73,15 @@ git clone https://github.com/heiko-haeusser/distance-measurement-rpi.git
 2. make install script excecutable
 ```sh
 sudo chmod +x install.sh
+sudo chmod +x uninstall.sh
 ```
 
 2. run install script (install.sh)<br />
-parameters: [-shell] [-cpp]<br />
+parameters: [-shell] [-cpp] [-km] [-task5]<br />
   -shell: installs the solution from task 2 <br />
-  -cpp: installs the solution as cpp solution (not yet implemented)<br />
+  -cpp: installs the solution as cpp solution<br />
+  -km: installs the solution as kernel module<br />
+  -task5: installs a CPU and RAM load logger to tempfs mounted in /media/sensor_logs/<br />
 ```sh
 sudo ./install.sh
 ```
@@ -96,9 +99,8 @@ Task description:<br />
 #### Task 1a: Prepare already an install script. Makes life easier..(install script, will be adjusted during development)
 Development of a install script which automatically deploys all necessary sources to the specified locations<br />
 
-  #### a) parameters: [-shell] [-cpp]<br />
+  #### a) parameters: [-shell]<br />
   -shell: installs the solution from task 2 <br />
-  -cpp: installs the solution as cpp solution (not yet implemented)<br />
 
 ### 1.b Project setup with installation from external drive (e.g. USB stick) in mind
 not clear what needs to be done here
@@ -125,14 +127,14 @@ The derived class Custom_Gpi holds all necessary functionality which is only rel
 There are two threads planned, one for doing the measurement and another one for flashing the LED.<br />
 ###### Description of components:
 Custom_Gpio:
-```sh
+```cpp
 	virtual int setupGpio(void) = 0; //abstract function to do the whole initialization 
 	int exportGpio(void); //sysfs export interface
 	int setGpioDir(void); //sysfs direction interface (in/out)
 	int unexportGpio(void); //sysfs unexport interface
 ```
 Custom_Gpo:
-```sh
+```cpp
 	Custom_Gpo(); //constructor
 	Custom_Gpo(int _gpio_number, std::string _gpio_direction, int _gpio_value); //user defined constructor
 
@@ -142,7 +144,7 @@ Custom_Gpo:
 	int setGpioValue(int value);
 ```
 Custom_Gpi:
-```sh
+```cpp
 	Custom_Gpi(); //constructor
 	Custom_Gpi(int _gpio_number, std::string _gpio_direction); //user defined constructor
 
@@ -154,7 +156,7 @@ Custom_Gpi:
 
 ##### 2. GPIO Manager
 The GPIO_Manager class implements a first abstraction to the user. GPIOs are only initialized and controlled, even the functionality is mapped to the function (e.g. gpio_led which holds the correct pin for the LED output).<br />
-```sh
+```cpp
 	Gpio_Manager(); //constructor
 	virtual ~Gpio_Manager(); //distructor
 	Gpio_Manager(const Gpio_Manager &other); //copy constructor
@@ -172,7 +174,7 @@ The GPIO_Manager class implements a first abstraction to the user. GPIOs are onl
 ##### 3. Ultrasonic Sensor Component
 The Ultrasonic Sensor Component implements an abstracted interface to the ultrasonic sensor.
 
-```sh
+```cpp
 	has a pointer to the Gpio_Manager 
 
 	Ultrasonic_Sensor(Gpio_Manager &gpioMgr); //constructor
@@ -194,10 +196,10 @@ The Ultrasonic Sensor Component implements an abstracted interface to the ultras
 ##### 4. Parking Distance Component
 The Parking Distance Component implements controls the LED according to the measured distance from the Ultrasonic Sensor Component.
 
-```sh
+```cpp
 	has a pointer to the Gpio_Manager and to the Ultrasonic_Sensor
 	
-	oid toggleLED(void); //toggle the LED with the updated frequency from the measurement thread
+	void toggleLED(void); //toggle the LED with the updated frequency from the measurement thread
 ```
 .<br />
 
@@ -239,7 +241,7 @@ I observed that sometimes two falling edges are processed without a rising edge 
 ## Conclusion
 
 The whole week and the final project were challenging, but doable. <br /><br />
-Many thanks to our linux coach Alexander Nassian, who did great classes and gave a very deep insight in Linux and Bash.<br /><br />
+Many thanks to our Linux coach Alexander Nassian, who did great classes and gave a very deep insight in Linux and Bash.<br /><br />
 The development of project was a lot of fun and very interesting, especially the little hickups when the project grew up.<br />
 One interesting finding was in the final test it pointed out that the kernel module could not be built because of missing dependencies. <br />
 Here is how I solved it: Upgrade of the kernel and install of the headers<br />
