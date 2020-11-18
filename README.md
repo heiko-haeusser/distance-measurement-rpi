@@ -276,7 +276,8 @@ One interesting finding was in the final test it pointed out that the kernel mod
 Here is how I solved it: Upgrade of the kernel and install of the headers<br />
 ```sh
 	sudo apt-get dist-upgrade
-	apt-get install linux-headers-$(uname -r)
+	sudo apt-get install linux-headers-$(uname -r)
+	sudo apt-get install raspberrypi-kernel-headers
 	
 ```
 
